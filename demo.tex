@@ -1,0 +1,85 @@
+% --- PDF/UA metadata (new + fallback) ---
+\ExplSyntaxOn
+\keys_if_exist:nnTF { document / metadata } { tags }
+  {
+    \DocumentMetadata{
+      pdfstandard = ua-1,
+      pdfversion  = 1.7,
+      tags,
+      lang        = en-US,
+      uncompress
+    }
+  }
+  {
+    \RequirePackage{pdfmanagement-testphase}
+    \DocumentMetadata{
+      testphase   = { tagging, uncompress },
+      pdfstandard = ua-1,
+      pdfversion  = 1.7,
+      lang        = en-US
+    }
+  }
+\ExplSyntaxOff
+
+\documentclass{accessarticle}
+
+% Adjust the margins or other aspects of the page geometry as desired
+\usepackage[margin=1in]{geometry}
+
+
+% Title is required, whether you use it for \maketitle or not
+% It sets the PDF title metadata
+\title{Accessible Article Template}
+
+\author{James M. Murray}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+  This is a demonstration of an accessible article template using the Access Article class.
+\end{abstract}
+
+\section{Including Graphics}
+\subsection{Accessible Graphics with Alt Text}
+
+The \texttt{includegraphics} environment is redefined to require alternative text for accessibility. Here is an example:\\
+
+\includegraphics[width=0.7\textwidth]
+  {Production possibilities frontier (PPF) illustrating that points inside the PPF are possible but inefficient, points on the frontier and possible and efficient, and points outside are not possible.}
+  {./myimage.jpg}
+
+\subsection{Purely Decorative Graphics}
+
+Use the new \texttt{decographics} command for purely decorative images that should be ignored by assistive technologies and therefore do not use alternative text:\\
+
+\decographics[width=0.5\textwidth]{./decorative.jpg}
+
+\section{Equations}
+
+The \texttt{displaymath} environment is enhanced to optionally provide alt text for your math expressions. \\
+  
+\begin{displaymath}[Sample standard deviation]
+  s = \sqrt{\frac{\displaystyle\sum_{i=1}^{n} x_i^2 - \frac{1}{n} \left(\sum_{i=1}^{n} x_i\right)^2}{n - 1}}
+\end{displaymath}
+
+\ \\ \ \\
+The \texttt{equation} environment is similarly enhanced: 
+
+\begin{equation}[Euler's Identity]
+  e^{i\pi} + 1 = 0 
+\end{equation}
+
+\section{Conclusion}
+
+This document class is intended to be simple with minimal additional features so that \LaTeX articles can meet accessibility standards.  
+
+Copyright 2025 James Murray, \href{https://www.gnu.org/licenses/gpl-3.0.en.html}{GNU General Public License v3.0}
+
+This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of FITNESS FOR A PARTICULAR PURPOSE.
+
+I welcome bug reports, feedback, and suggestions, but I have very limited time to maintain this project. Do not expect responses, fixes, or new features in a timely manner.
+
+
+\end{document}
