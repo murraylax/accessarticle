@@ -1,11 +1,25 @@
-% --- PDF/UA metadata ---
-\DocumentMetadata{
-  testphase   = latest,
-  pdfstandard = ua-1,
-  pdfversion  = 1.7,
-  lang        = en-US,
-  uncompress
-}
+% --- PDF/UA metadata (new + fallback) ---
+\ExplSyntaxOn
+\keys_if_exist:nnTF { document / metadata } { tags }
+  {
+    \DocumentMetadata{
+      pdfstandard = ua-1,
+      pdfversion  = 1.7,
+      tags,
+      lang        = en-US,
+      uncompress
+    }
+  }
+  {
+    \RequirePackage{pdfmanagement-testphase}
+    \DocumentMetadata{
+      testphase   = { tagging, uncompress },
+      pdfstandard = ua-1,
+      pdfversion  = 1.7,
+      lang        = en-US
+    }
+  }
+\ExplSyntaxOff
 
 \documentclass{accessarticle}
 
@@ -50,18 +64,18 @@ Use the new \texttt{decographics} command for purely decorative images that shou
 
 \section{Equations}
 
-The \texttt{accmath} environment provides display math with alt text for accessibility. \\
+The \texttt{displaymath} environment is enhanced to optionally provide alt text for your math expressions. \\
   
-\begin{accmath}[Sample standard deviation]
+\begin{displaymath}[Sample standard deviation]
   s = \sqrt{\frac{\displaystyle\sum_{i=1}^{n} x_i^2 - \frac{1}{n} \left(\sum_{i=1}^{n} x_i\right)^2}{n - 1}}
-\end{accmath}
+\end{displaymath}
 
 \ \\ \ \\
-The \texttt{acceqn} environment is a numbered equation with alt text: 
+The \texttt{equation} environment is similarly enhanced: 
 
-\begin{acceqn}[Euler's Identity]
+\begin{equation}[Euler's Identity]
   e^{i\pi} + 1 = 0 
-\end{acceqn}
+\end{equation}
 
 \section{Conclusion}
 

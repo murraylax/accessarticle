@@ -98,68 +98,45 @@
 }
 
 % --- Accessible display/equation with optional alt text ---
-% With testphase=latest, latex-lab already tags math environments automatically.
-% The accmath and acceqn environments add alt text support.
-%
-% Usage: \begin{accmath}[Plain-language description] ... \end{accmath}
-% Usage: \begin{acceqn}[Plain-language description] ... \end{acceqn}
-%
-% Standard displaymath and equation are left for latex-lab to handle natively.
-
-\makeatletter
-% Save catcode-3 (math shift) $ tokens to bypass latex-lab's active-$ hooks
-\begingroup
-\catcode`\$=3\relax
-\gdef\accessarticle@mathopen{$}%
-\gdef\accessarticle@mathclose{$}%
-\endgroup
-
-% Accessible displaymath: manually tag with alt text
-% Uses inline $\displaystyle...$ with catcode-3 $ to bypass latex-lab hooks,
-% centered via \hfil to simulate display math.
-\ExplSyntaxOn
-\NewDocumentEnvironment{accmath}{ O{} }{%
-  \par\addvspace{\abovedisplayskip}%
+% Accessible display math: redefine 'displaymath' to add tagging + optional alt text.
+% Usage: \begin{displaymath}[Plain-language description] ... \end{displaymath}
+% If optional argument omitted, no alt text is added.
+\let\origdisplaymath\displaymath
+\let\origenddisplaymath\enddisplaymath
+\RenewDocumentEnvironment{displaymath}{ O{} }{%
+  % Start original display math (sets up math mode)
+  \origdisplaymath
+  % Immediately open structure element so formula content is inside it
   \if\relax\detokenize{#1}\relax
-    \tagstructbegin{tag=Formula}%
+    	\tagstructbegin{tag=Formula}% no alt text
   \else
-    \tagstructbegin{tag=Formula,alttext={#1}}%
+    	\tagstructbegin{tag=Formula,alttext=\unexpanded{#1}}%
   \fi
-  \tagmcbegin{tag=Formula}%
-  \noindent\hfil
-  \bool_set_true:N \l__math_collected_bool
-  \accessarticle@mathopen\displaystyle
 }{%
-  \accessarticle@mathclose
-  \hfil\null
-  \tagmcend
+  % Close structure before leaving display math environment
   \tagstructend
-  \par\addvspace{\belowdisplayskip}%
+  \origenddisplaymath
 }
 
-% Accessible equation (numbered): same approach with equation number
-\newcounter{accessarticleeqn}
-\NewDocumentEnvironment{acceqn}{ O{} }{%
-  \stepcounter{accessarticleeqn}%
-  \par\addvspace{\abovedisplayskip}%
+% Accessible equation: redefine 'equation' to add tagging + optional alt text.
+% Usage: \begin{equation}[Plain-language description] ... \end{equation}
+% If optional argument omitted, no alt text is added.
+\let\origequation\equation
+\let\origendequation\endequation
+\RenewDocumentEnvironment{equation}{ O{} }{%
+  % Start original display math (sets up math mode)
+  \origequation
+  % Immediately open structure element so formula content is inside it
   \if\relax\detokenize{#1}\relax
-    \tagstructbegin{tag=Formula}%
+    	\tagstructbegin{tag=Formula}% no alt text
   \else
-    \tagstructbegin{tag=Formula,alttext={#1}}%
+    	\tagstructbegin{tag=Formula,alttext=\unexpanded{#1}}%
   \fi
-  \tagmcbegin{tag=Formula}%
-  \noindent\hfil
-  \bool_set_true:N \l__math_collected_bool
-  \accessarticle@mathopen\displaystyle
 }{%
-  \accessarticle@mathclose
-  \hfil(\theaccessarticleeqn)%
-  \tagmcend
+  % Close structure before leaving display math environment
   \tagstructend
-  \par\addvspace{\belowdisplayskip}%
+  \origendequation
 }
-\ExplSyntaxOff
-\makeatother
 
 \RequirePackage{fontspec}
 \RequirePackage[english]{babel}
