@@ -163,3 +163,54 @@
 
 \RequirePackage{fontspec}
 \RequirePackage[english]{babel}
+
+% --- List formatting ---
+% Redefine itemize/enumerate to support per-environment enumitem options
+% (e.g., [leftmargin=1pc]) which latex-lab tagging otherwise blocks.
+\RequirePackage{enumitem}
+
+\makeatletter
+% Storage for list options
+\newlength{\accessarticle@listmargin}
+
+% Define keys for list options
+\define@key{accesslist}{leftmargin}{\setlength{\accessarticle@listmargin}{#1}}
+
+% Save original environments before latex-lab modifies them
+\let\accessarticle@origitemize\itemize
+\let\accessarticle@endorigitemize\enditemize
+\let\accessarticle@origenumerate\enumerate
+\let\accessarticle@endorigenumerate\endenumerate
+
+\AtBeginDocument{%
+  % Now save the latex-lab tagged versions
+  \let\accessarticle@taggeditemize\itemize
+  \let\accessarticle@endtaggeditemize\enditemize
+  \let\accessarticle@taggedenumerate\enumerate
+  \let\accessarticle@endtaggedenumerate\endenumerate
+  
+  % Redefine itemize to accept leftmargin option
+  \renewenvironment{itemize}[1][]{%
+    \setlength{\accessarticle@listmargin}{0pt}%
+    \setkeys{accesslist}{#1}%
+    \ifdim\accessarticle@listmargin>0pt
+      \setlength{\leftmargini}{\accessarticle@listmargin}%
+    \fi
+    \accessarticle@taggeditemize
+  }{%
+    \accessarticle@endtaggeditemize
+  }%
+  
+  % Redefine enumerate to accept leftmargin option
+  \renewenvironment{enumerate}[1][]{%
+    \setlength{\accessarticle@listmargin}{0pt}%
+    \setkeys{accesslist}{#1}%
+    \ifdim\accessarticle@listmargin>0pt
+      \setlength{\leftmargini}{\accessarticle@listmargin}%
+    \fi
+    \accessarticle@taggedenumerate
+  }{%
+    \accessarticle@endtaggedenumerate
+  }%
+}
+\makeatother
